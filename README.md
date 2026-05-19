@@ -428,3 +428,6 @@ Logo 参考了原始的 [Markdown 图标](https://github.com/dcurtis/markdown-ma
 CLI（`quarkdown-cli`）和语言服务器（`quarkdown-lsp`）模块及二进制文件采用 GNU AGPLv3 许可证。
 
 ## 脚注
+
+---
+*README.md 汉化自 https://github.com/iamgio/quarkdown*
