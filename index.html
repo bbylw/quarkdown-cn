@@ -1,499 +1,1130 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quarkdown - 基于 Markdown 的现代排版系统</title>
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quarkdown — 拥有超能力的 Markdown</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        dark: '#141413',
-                        light: '#faf9f5',
-                        mid: '#b0aea5',
-                        subtle: '#e8e6dc',
-                        accent: {
-                            orange: '#d97757',
-                            blue: '#6a9bcc',
-                            green: '#788c5d'
-                        }
-                    },
-                    fontFamily: {
-                        heading: ['Poppins', 'sans-serif'],
-                        body: ['Lora', 'serif']
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#edfcf5",
+                100: "#d4f7e6",
+                200: "#aceed1",
+                300: "#76dfb6",
+                400: "#3ec896",
+                500: "#1aad7d",
+                600: "#0e8c65",
+                700: "#0b7053",
+                800: "#0b5943",
+                900: "#0a4938",
+                950: "#042920",
+              },
+              surface: {
+                50: "#f8faf9",
+                100: "#f0f3f2",
+                200: "#e2e7e5",
+                300: "#cdd5d2",
+                700: "#3a4240",
+                800: "#252b2a",
+                900: "#171c1b",
+                950: "#0c0f0e",
+              },
+              cyan: {
+                450: "#22b8cf",
+              },
+            },
+            fontFamily: {
+              display: ['"Space Grotesk"', "sans-serif"],
+              body: ['"Noto Sans SC"', '"Space Grotesk"', "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+            animation: {
+              float: "float 6s ease-in-out infinite",
+              "float-delayed": "float 6s ease-in-out 2s infinite",
+              "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+              "slide-up": "slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              "fade-in": "fadeIn 0.8s ease forwards",
+              shimmer: "shimmer 2.5s linear infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-12px)" },
+              },
+              slideUp: {
+                "0%": { opacity: "0", transform: "translateY(30px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              shimmer: {
+                "0%": { backgroundPosition: "-200% 0" },
+                "100%": { backgroundPosition: "200% 0" },
+              },
+            },
+          },
+        },
+      };
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        :root {
-            --dark: #141413;
-            --light: #faf9f5;
-            --mid: #b0aea5;
-            --subtle: #e8e6dc;
-            --accent-orange: #d97757;
-            --accent-blue: #6a9bcc;
-            --accent-green: #788c5d;
+      :root {
+        --bg: #0c0f0e;
+        --fg: #e2e7e5;
+        --muted: #6b7a76;
+        --accent: #1aad7d;
+        --accent-glow: rgba(26, 173, 125, 0.15);
+        --card: #171c1b;
+        --border: #252b2a;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--fg);
+      }
+
+      .gradient-mesh {
+        background:
+          radial-gradient(
+            ellipse 60% 50% at 20% 30%,
+            rgba(26, 173, 125, 0.08) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 50% 60% at 80% 60%,
+            rgba(34, 184, 207, 0.06) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 50% 90%,
+            rgba(26, 173, 125, 0.04) 0%,
+            transparent 70%
+          );
+      }
+
+      .noise-overlay::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        pointer-events: none;
+      }
+
+      .glass {
+        background: rgba(23, 28, 27, 0.7);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .glass-light {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .code-block {
+        background: linear-gradient(
+          135deg,
+          rgba(26, 173, 125, 0.06),
+          rgba(34, 184, 207, 0.04)
+        );
+        border: 1px solid rgba(26, 173, 125, 0.15);
+      }
+
+      .accent-border {
+        border-image: linear-gradient(135deg, var(--accent), #22b8cf) 1;
+      }
+
+      .text-gradient {
+        background: linear-gradient(135deg, #1aad7d, #22b8cf);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .shimmer-text {
+        background: linear-gradient(
+          90deg,
+          #1aad7d 0%,
+          #22b8cf 25%,
+          #1aad7d 50%,
+          #22b8cf 75%,
+          #1aad7d 100%
+        );
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shimmer 3s linear infinite;
+      }
+
+      .feature-card {
+        transition:
+          transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+          box-shadow 0.3s ease;
+      }
+      .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(26, 173, 125, 0.1);
+      }
+
+      .nav-link {
+        position: relative;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #1aad7d, #22b8cf);
+        transition: width 0.3s ease;
+      }
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .scroll-reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.7s ease,
+          transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .scroll-reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .orbit-ring {
+        animation: orbit-spin 20s linear infinite;
+      }
+      @keyframes orbit-spin {
+        from {
+          transform: rotate(0deg);
         }
-        
-        body {
-            font-family: 'Lora', serif;
-            background-color: var(--light);
-            color: var(--dark);
+        to {
+          transform: rotate(360deg);
         }
-        
-        .font-heading {
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .noise-bg {
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
-        }
-        
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .animate-pulse-slow {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .code-block {
-            background: var(--dark);
-            color: #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            overflow-x: auto;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-        
-        .comparison-table th,
-        .comparison-table td {
-            padding: 1rem 1.5rem;
-            text-align: center;
-            border-bottom: 1px solid var(--subtle);
-        }
-        
-        .comparison-table th {
-            background: var(--dark);
-            color: var(--light);
-            font-weight: 600;
-        }
-        
-        .comparison-table tr:nth-child(even) {
-            background: rgba(232, 230, 220, 0.3);
-        }
-        
-        .comparison-table tr:hover {
-            background: rgba(217, 119, 87, 0.1);
-        }
-        
-        .feature-card {
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(217, 119, 87, 0.3);
-        }
-        
-        .section-divider {
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--mid), transparent);
-        }
-        
-        @media (prefers-reduced-motion: reduce) {
-            .animate-float,
-            .animate-pulse-slow {
-                animation: none;
-            }
-            
-            .feature-card:hover {
-                transform: none;
-            }
-            
-            .btn-primary:hover {
-                transform: none;
-            }
-        }
+      }
+
+      .orbit-ring-reverse {
+        animation: orbit-spin 30s linear infinite reverse;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted);
+      }
+
+      .comparison-table td,
+      .comparison-table th {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .tag {
+        background: rgba(26, 173, 125, 0.1);
+        border: 1px solid rgba(26, 173, 125, 0.2);
+        color: #3ec896;
+      }
+
+      .install-card {
+        transition:
+          border-color 0.3s ease,
+          background 0.3s ease;
+      }
+      .install-card:hover {
+        border-color: rgba(26, 173, 125, 0.3);
+        background: rgba(26, 173, 125, 0.03);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #0e8c65, #1aad7d);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(26, 173, 125, 0.3);
+      }
+      .btn-primary:active {
+        transform: scale(0.98);
+      }
+
+      .btn-outline {
+        border: 1px solid rgba(26, 173, 125, 0.3);
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+      .btn-outline:hover {
+        background: rgba(26, 173, 125, 0.08);
+        border-color: rgba(26, 173, 125, 0.5);
+      }
     </style>
-</head>
-<body class="noise-bg">
-    <!-- 导航栏 -->
-    <nav class="fixed top-0 w-full z-50 glass-card">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <img class="h-8 w-8" src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-dark.svg" alt="Quarkdown Logo">
-                    </div>
-                    <div class="ml-4">
-                        <h1 class="font-heading font-bold text-xl text-dark">Quarkdown</h1>
-                    </div>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#features" class="font-heading text-dark hover:text-accent-orange transition-colors duration-300">功能特点</a>
-                        <a href="#comparison" class="font-heading text-dark hover:text-accent-orange transition-colors duration-300">对比</a>
-                        <a href="#quickstart" class="font-heading text-dark hover:text-accent-orange transition-colors duration-300">快速上手</a>
-                        <a href="#examples" class="font-heading text-dark hover:text-accent-orange transition-colors duration-300">示例</a>
-                        <a href="https://quarkdown.com/wiki" target="_blank" class="font-heading text-dark hover:text-accent-orange transition-colors duration-300">文档</a>
-                    </div>
-                </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="text-dark hover:text-accent-orange">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
+  </head>
+
+  <body class="font-body antialiased overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass" id="navbar">
+      <div
+        class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+      >
+        <a href="#hero" class="flex items-center gap-3 group">
+          <img
+            src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-light.svg"
+            alt="Quarkdown"
+            class="w-8 h-8 transition-transform group-hover:scale-110"
+          />
+          <span class="font-display font-bold text-lg tracking-tight"
+            >Quarkdown</span
+          >
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a
+            href="#about"
+            class="nav-link text-sm text-surface-300 hover:text-white transition-colors"
+            >关于</a
+          >
+          <a
+            href="#features"
+            class="nav-link text-sm text-surface-300 hover:text-white transition-colors"
+            >特性</a
+          >
+          <a
+            href="#output"
+            class="nav-link text-sm text-surface-300 hover:text-white transition-colors"
+            >输出目标</a
+          >
+          <a
+            href="#comparison"
+            class="nav-link text-sm text-surface-300 hover:text-white transition-colors"
+            >对比</a
+          >
+          <a
+            href="#quickstart"
+            class="nav-link text-sm text-surface-300 hover:text-white transition-colors"
+            >快速上手</a
+          >
+          <a
+            href="https://quarkdown.com/wiki"
+            target="_blank"
+            class="btn-primary px-4 py-2 rounded-lg text-sm font-medium text-white"
+            >阅读 Wiki</a
+          >
         </div>
-        
-        <!-- 移动端菜单 -->
-        <div id="mobile-menu" class="md:hidden hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#features" class="block font-heading text-dark hover:text-accent-orange px-3 py-2">功能特点</a>
-                <a href="#comparison" class="block font-heading text-dark hover:text-accent-orange px-3 py-2">对比</a>
-                <a href="#quickstart" class="block font-heading text-dark hover:text-accent-orange px-3 py-2">快速上手</a>
-                <a href="#examples" class="block font-heading text-dark hover:text-accent-orange px-3 py-2">示例</a>
-                <a href="https://quarkdown.com/wiki" target="_blank" class="block font-heading text-dark hover:text-accent-orange px-3 py-2">文档</a>
-            </div>
-        </div>
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden text-surface-300 hover:text-white"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-3">
+        <a
+          href="#about"
+          class="block text-sm text-surface-300 hover:text-white py-1"
+          >关于</a
+        >
+        <a
+          href="#features"
+          class="block text-sm text-surface-300 hover:text-white py-1"
+          >特性</a
+        >
+        <a
+          href="#output"
+          class="block text-sm text-surface-300 hover:text-white py-1"
+          >输出目标</a
+        >
+        <a
+          href="#comparison"
+          class="block text-sm text-surface-300 hover:text-white py-1"
+          >对比</a
+        >
+        <a
+          href="#quickstart"
+          class="block text-sm text-surface-300 hover:text-white py-1"
+          >快速上手</a
+        >
+        <a
+          href="https://quarkdown.com/wiki"
+          target="_blank"
+          class="block btn-primary px-4 py-2 rounded-lg text-sm font-medium text-white text-center"
+          >阅读 Wiki</a
+        >
+      </div>
     </nav>
 
-    <!-- 英雄区域 -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-accent-orange/10 rounded-full blur-3xl animate-float"></div>
-            <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent-blue/10 rounded-full blur-3xl animate-float" style="animation-delay: -2s;"></div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-accent-green/10 rounded-full blur-3xl animate-pulse-slow"></div>
+    <!-- Hero Section -->
+    <section
+      id="hero"
+      class="relative min-h-screen flex items-center justify-center gradient-mesh noise-overlay overflow-hidden"
+    >
+      <!-- Orbiting rings -->
+      <div
+        class="absolute inset-0 flex items-center justify-center pointer-events-none"
+      >
+        <div
+          class="orbit-ring absolute w-[500px] h-[500px] rounded-full border border-brand-800/20"
+        ></div>
+        <div
+          class="orbit-ring-reverse absolute w-[700px] h-[700px] rounded-full border border-cyan-450/10"
+        ></div>
+        <div
+          class="orbit-ring absolute w-[900px] h-[900px] rounded-full border border-brand-800/10"
+          style="animation-duration: 40s"
+        ></div>
+      </div>
+
+      <div class="relative z-10 max-w-5xl mx-auto px-6 text-center pt-20">
+        <!-- Banner image -->
+        <div class="mb-8 animate-fade-in">
+          <img
+            src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/tbanner-light.svg"
+            alt="Quarkdown Banner"
+            class="w-full max-w-2xl mx-auto"
+          />
         </div>
-        
-        <div class="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-            <div class="mb-8">
-                <img src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/tbanner-dark.svg" alt="Quarkdown Banner" class="mx-auto max-w-full h-auto">
+
+        <!-- Badges -->
+        <div
+          class="flex flex-wrap items-center justify-center gap-3 mb-8 animate-slide-up"
+          style="animation-delay: 0.2s"
+        >
+          <a
+            href="https://quarkdown.com/wiki"
+            target="_blank"
+            class="tag px-3 py-1 rounded-full text-xs font-medium"
+            >Wiki</a
+          >
+          <a
+            href="https://quarkdown.com/docs"
+            target="_blank"
+            class="tag px-3 py-1 rounded-full text-xs font-medium"
+            style="
+              border-color: rgba(59, 130, 246, 0.3);
+              background: rgba(59, 130, 246, 0.1);
+              color: #60a5fa;
+            "
+            >文档</a
+          >
+          <a
+            href="https://github.com/iamgio/quarkdown/releases/latest"
+            target="_blank"
+            class="tag px-3 py-1 rounded-full text-xs font-medium"
+            style="
+              border-color: rgba(34, 197, 94, 0.3);
+              background: rgba(34, 197, 94, 0.1);
+              color: #4ade80;
+            "
+            >最新稳定版</a
+          >
+          <a
+            href="https://marketplace.visualstudio.com/items?itemName=quarkdown.quarkdown-vscode"
+            target="_blank"
+            class="tag px-3 py-1 rounded-full text-xs font-medium"
+            style="
+              border-color: rgba(139, 92, 246, 0.3);
+              background: rgba(139, 92, 246, 0.1);
+              color: #a78bfa;
+            "
+            >VS Code 扩展</a
+          >
+        </div>
+
+        <h1
+          class="font-display text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-none mb-6 animate-slide-up"
+          style="animation-delay: 0.3s"
+        >
+          拥有超能力的
+          <span class="shimmer-text">Markdown</span>
+        </h1>
+
+        <p
+          class="text-lg md:text-xl text-surface-300 max-w-2xl mx-auto mb-10 leading-relaxed animate-slide-up"
+          style="animation-delay: 0.4s"
+        >
+          Quarkdown 是一个基于 Markdown
+          的现代排版系统，允许单个项目无缝编译为印刷级书籍、学术论文、知识库或交互式演示文稿。
+        </p>
+
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up"
+          style="animation-delay: 0.5s"
+        >
+          <a
+            href="#quickstart"
+            class="btn-primary px-8 py-3.5 rounded-xl text-base font-semibold text-white"
+          >
+            快速上手
+          </a>
+          <a
+            href="https://quarkdown.com/wiki"
+            target="_blank"
+            class="btn-outline px-8 py-3.5 rounded-xl text-base font-medium text-brand-400"
+          >
+            阅读文档
+          </a>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
+          <svg
+            class="w-5 h-5 text-surface-700"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="relative py-28 md:py-36">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-20">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >关于 Quarkdown</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            如你所期望般简单<span class="text-gradient">...</span>
+          </h2>
+          <p class="text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            作为 CommonMark 和 GFM 的扩展，Quarkdown Flavor 为 Markdown
+            引入了<strong class="text-white">函数</strong
+            >，以及许多其他语法扩展。
+          </p>
+        </div>
+
+        <!-- Demo image -->
+        <div class="scroll-reveal mb-20">
+          <div
+            class="relative rounded-2xl overflow-hidden border border-surface-800 shadow-2xl shadow-brand-900/10"
+          >
+            <img
+              src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/paged-demo.png"
+              alt="论文演示"
+              class="w-full"
+            />
+            <div
+              class="absolute bottom-4 right-4 glass rounded-lg px-3 py-1.5 text-xs text-surface-300"
+            >
+              灵感来源：<a
+                href="https://arxiv.org/abs/1706.03762v7"
+                target="_blank"
+                class="text-brand-400 hover:underline"
+                >Attention Is All You Need</a
+              >
             </div>
-            
-            <h1 class="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl mb-6">
-                <span class="gradient-text">基于 Markdown 的现代排版系统</span>
-            </h1>
-            
-            <p class="font-body text-xl sm:text-2xl text-dark/80 mb-8 max-w-3xl mx-auto leading-relaxed">
-                Quarkdown 是一个专为<strong>多用途</strong>而设计的现代排版系统。它允许单个项目无缝编译为印刷级书籍、学术论文、知识库或交互式演示文稿。
+          </div>
+        </div>
+
+        <!-- Function demo -->
+        <div class="scroll-reveal grid md:grid-cols-2 gap-8 mb-20">
+          <div class="code-block rounded-2xl p-8">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-3 h-3 rounded-full bg-brand-500/60"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+              <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+              <span class="ml-3 text-xs text-surface-300 font-mono"
+                >函数调用语法</span
+              >
+            </div>
+            <pre
+              class="font-mono text-sm leading-relaxed text-surface-200"
+            ><code><span class="text-brand-400">.somefunction</span> <span class="text-cyan-400">{arg1}</span> <span class="text-cyan-400">{arg2}</span>
+    Body argument</code></pre>
+          </div>
+          <div class="code-block rounded-2xl p-8">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-3 h-3 rounded-full bg-brand-500/60"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+              <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+              <span class="ml-3 text-xs text-surface-300 font-mono"
+                >自定义函数</span
+              >
+            </div>
+            <pre
+              class="font-mono text-sm leading-relaxed text-surface-200"
+            ><code><span class="text-brand-400">.function</span> <span class="text-cyan-400">{greet}</span>
+    to from:
+    <span class="text-yellow-300">**Hello, .to**</span> from <span class="text-cyan-400">.from</span>!
+
+<span class="text-brand-400">.greet</span> <span class="text-cyan-400">{world}</span> from:<span class="text-cyan-400">{iamgio}</span></code></pre>
+            <div
+              class="mt-4 pt-4 border-t border-brand-800/30 text-sm text-surface-300"
+            >
+              结果：<strong class="text-white">Hello, world</strong> from
+              iamgio!
+            </div>
+          </div>
+        </div>
+
+        <!-- Powerful section -->
+        <div class="scroll-reveal text-center">
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            ...如你所需要般<span class="text-gradient">强大</span>
+          </h2>
+          <div
+            class="relative rounded-2xl overflow-hidden border border-surface-800 mt-10"
+          >
+            <img
+              src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/code-chart.png"
+              alt="图表代码演示"
+              class="w-full"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="relative py-28 md:py-36 gradient-mesh">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-20">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >核心特性</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            可能性是<span class="text-gradient">无限的</span>
+          </h2>
+          <p class="text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            得益于不断扩展的标准库，Quarkdown
+            提供了布局构建器、I/O、数学运算、条件语句和循环。
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Feature 1 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-brand-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg font-semibold mb-3">
+              图灵完备扩展
+            </h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              对 Markdown 的极其强大的图灵完备扩展，确保你的想法能自动化为文档。
             </p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="#quickstart" class="btn-primary text-white font-heading font-semibold px-8 py-4 rounded-full text-lg">
-                    快速开始
-                </a>
-                <a href="https://github.com/iamgio/quarkdown" target="_blank" class="font-heading font-semibold text-dark border-2 border-dark hover:border-accent-orange hover:text-accent-orange px-8 py-4 rounded-full text-lg transition-colors duration-300">
-                    查看源码
-                </a>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-cyan-450/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-cyan-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
+                />
+              </svg>
             </div>
-            
-            <div class="mt-12 flex flex-wrap justify-center gap-4">
-                <a href="https://quarkdown.com/wiki" target="_blank" class="inline-flex items-center px-4 py-2 bg-accent-blue/10 text-accent-blue rounded-full font-heading text-sm hover:bg-accent-blue/20 transition-colors duration-300">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
-                    </svg>
-                    Wiki 文档
-                </a>
-                <a href="https://quarkdown.com/docs" target="_blank" class="inline-flex items-center px-4 py-2 bg-accent-green/10 text-accent-green rounded-full font-heading text-sm hover:bg-accent-green/20 transition-colors duration-300">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
-                    </svg>
-                    API 文档
-                </a>
-                <a href="https://github.com/iamgio/quarkdown/releases/latest" target="_blank" class="inline-flex items-center px-4 py-2 bg-accent-orange/10 text-accent-orange rounded-full font-heading text-sm hover:bg-accent-orange/20 transition-colors duration-300">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-                    </svg>
-                    最新版本
-                </a>
+            <h3 class="font-display text-lg font-semibold mb-3">丰富标准库</h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              布局构建器、I/O、数学运算、条件语句和循环，开箱即用。
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-purple-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                />
+              </svg>
             </div>
+            <h3 class="font-display text-lg font-semibold mb-3">
+              自定义函数与变量
+            </h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              你仍然可以在 Markdown
+              中定义自己的函数和变量，甚至可以为所有人创建出色的库。
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-yellow-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg font-semibold mb-3">快速编译</h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              极快的编译速度，结合实时预览，让创作流畅无阻。
+            </p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-rose-500/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-rose-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg font-semibold mb-3">实时预览</h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              结合
+              <code class="text-brand-400">-p -w</code>
+              选项即可实现实时预览，所见即所得。
+            </p>
+          </div>
+
+          <!-- Feature 6 -->
+          <div class="scroll-reveal feature-card glass-light rounded-2xl p-8">
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-5"
+            >
+              <svg
+                class="w-6 h-6 text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                />
+              </svg>
+            </div>
+            <h3 class="font-display text-lg font-semibold mb-3">
+              VS Code 扩展
+            </h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              强大的 VS Code 扩展，提供语法高亮、自动补全和实时预览支持。
+            </p>
+          </div>
         </div>
-        
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg class="w-6 h-6 text-dark/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-            </svg>
+
+        <!-- Live Preview Demo -->
+        <div class="scroll-reveal mt-20">
+          <div
+            class="relative rounded-2xl overflow-hidden border border-surface-800 shadow-2xl shadow-brand-900/10"
+          >
+            <img
+              src="https://raw.githubusercontent.com/quarkdown-labs/quarkdown-vscode/refs/heads/project-files/live-preview.gif"
+              alt="实时预览"
+              class="w-full"
+            />
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- 功能特点 -->
-    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-6">
-                    强大的<span class="gradient-text">输出目标</span>
-                </h2>
-                <p class="font-body text-xl text-dark/70 max-w-3xl mx-auto">
-                    Quarkdown 支持多种输出格式，满足从静态网站到印刷级文档的各种需求
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- HTML 普通模式 -->
-                <div class="feature-card glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-orange/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-xl mb-4">HTML 普通模式</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        类似 Notion/Obsidian 的连续流式排版，非常适合静态网站和知识管理
-                    </p>
-                    <div class="flex items-center text-accent-orange font-heading text-sm">
-                        <span>查看作者网站</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </div>
-                </div>
-                
-                <!-- HTML 分页模式 -->
-                <div class="feature-card glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-blue/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-xl mb-4">HTML 分页模式</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        通过 paged.js 实现，非常适合论文、文章和书籍的排版
-                    </p>
-                    <div class="flex items-center text-accent-blue font-heading text-sm">
-                        <span>查看演示文档</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </div>
-                </div>
-                
-                <!-- HTML 幻灯片模式 -->
-                <div class="feature-card glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-green/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2m-1 4h-4m4 0h2m-6 4h6m-6 4h6"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-xl mb-4">HTML 幻灯片模式</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        通过 reveal.js 实现，非常适合交互式演示文稿
-                    </p>
-                    <div class="flex items-center text-accent-green font-heading text-sm">
-                        <span>创建演示文稿</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </div>
-                </div>
-                
-                <!-- HTML 文档模式 -->
-                <div class="feature-card glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-orange/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-xl mb-4">HTML 文档模式</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        非常适合 Wiki、技术文档和大型知识库
-                    </p>
-                    <div class="flex items-center text-accent-orange font-heading text-sm">
-                        <span>查看 Quarkdown Wiki</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="glass-card rounded-2xl p-8">
-                    <h3 class="font-heading font-semibold text-2xl mb-4">PDF 导出</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        HTML 支持的所有文档类型和功能在导出为 PDF 时同样受支持。无论是书籍、论文还是演示文稿，都可以高质量导出。
-                    </p>
-                    <div class="flex items-center text-accent-blue font-heading text-sm">
-                        <span>了解 PDF 导出</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </div>
-                </div>
-                
-                <div class="glass-card rounded-2xl p-8">
-                    <h3 class="font-heading font-semibold text-2xl mb-4">纯文本输出</h3>
-                    <p class="font-body text-dark/70 mb-4">
-                        除了富媒体输出，Quarkdown 还支持纯文本输出，适用于简单的文本处理和数据提取场景。
-                    </p>
-                    <div class="flex items-center text-accent-green font-heading text-sm">
-                        <span>查看文档类型</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
+    <!-- Output Targets Section -->
+    <section id="output" class="relative py-28 md:py-36">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-20">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >输出目标</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            一次编写，<span class="text-gradient">多种输出</span>
+          </h2>
+          <p class="text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            所需的文档类型可以通过在源文件中调用
+            <code class="text-brand-400 font-mono">.doctype</code> 函数来设置。
+          </p>
         </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- HTML Outputs -->
+          <div class="scroll-reveal glass-light rounded-2xl p-8 md:col-span-2">
+            <h3
+              class="font-display text-xl font-semibold mb-6 flex items-center gap-3"
+            >
+              <span
+                class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 text-sm font-bold"
+                >H</span
+              >
+              HTML 输出
+            </h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                class="glass rounded-xl p-5 group hover:border-brand-700/40 transition-colors"
+              >
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-2 h-2 rounded-full bg-brand-400"></div>
+                  <span class="font-display font-semibold text-sm"
+                    >普通模式</span
+                  >
+                </div>
+                <p class="text-xs text-surface-300 leading-relaxed">
+                  类似 Notion/Obsidian 的连续流式排版，适合静态网站和知识管理
+                </p>
+                <code class="mt-3 block text-xs font-mono text-brand-400"
+                  >.doctype {plain}</code
+                >
+              </div>
+              <div
+                class="glass rounded-xl p-5 group hover:border-brand-700/40 transition-colors"
+              >
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                  <span class="font-display font-semibold text-sm"
+                    >分页模式</span
+                  >
+                </div>
+                <p class="text-xs text-surface-300 leading-relaxed">
+                  适合论文、文章和书籍，通过 paged.js 实现
+                </p>
+                <code class="mt-3 block text-xs font-mono text-brand-400"
+                  >.doctype {paged}</code
+                >
+              </div>
+              <div
+                class="glass rounded-xl p-5 group hover:border-brand-700/40 transition-colors"
+              >
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-2 h-2 rounded-full bg-purple-400"></div>
+                  <span class="font-display font-semibold text-sm"
+                    >幻灯片模式</span
+                  >
+                </div>
+                <p class="text-xs text-surface-300 leading-relaxed">
+                  适合交互式演示文稿，通过 reveal.js 实现
+                </p>
+                <code class="mt-3 block text-xs font-mono text-brand-400"
+                  >.doctype {slides}</code
+                >
+              </div>
+              <div
+                class="glass rounded-xl p-5 group hover:border-brand-700/40 transition-colors"
+              >
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                  <span class="font-display font-semibold text-sm"
+                    >文档模式</span
+                  >
+                </div>
+                <p class="text-xs text-surface-300 leading-relaxed">
+                  适合 Wiki、技术文档和大型知识库
+                </p>
+                <code class="mt-3 block text-xs font-mono text-brand-400"
+                  >.doctype {docs}</code
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- PDF -->
+          <div class="scroll-reveal glass-light rounded-2xl p-8">
+            <h3
+              class="font-display text-xl font-semibold mb-4 flex items-center gap-3"
+            >
+              <span
+                class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 text-sm font-bold"
+                >P</span
+              >
+              PDF 导出
+            </h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              HTML 支持的所有文档类型和功能在导出为 PDF 时同样受支持。
+            </p>
+            <div class="mt-4 flex items-center gap-2">
+              <code class="text-xs font-mono text-brand-400"
+                >quarkdown c file.qd --pdf</code
+              >
+            </div>
+          </div>
+
+          <!-- Plain Text -->
+          <div class="scroll-reveal glass-light rounded-2xl p-8">
+            <h3
+              class="font-display text-xl font-semibold mb-4 flex items-center gap-3"
+            >
+              <span
+                class="w-8 h-8 rounded-lg bg-surface-700 flex items-center justify-center text-surface-300 text-sm font-bold"
+                >T</span
+              >
+              纯文本
+            </h3>
+            <p class="text-sm text-surface-300 leading-relaxed">
+              轻量级纯文本输出，适用于需要最简内容的场景。
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 分隔线 -->
-    <div class="section-divider mx-4 sm:mx-6 lg:mx-8"></div>
+    <!-- Comparison Section -->
+    <section id="comparison" class="relative py-28 md:py-36 gradient-mesh">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-20">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >对比</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            为什么选择 <span class="text-gradient">Quarkdown</span>
+          </h2>
+        </div>
 
-    <!-- 对比部分 -->
-    <section id="comparison" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-6">
-                    与其他工具<span class="gradient-text">对比</span>
-                </h2>
-                <p class="font-body text-xl text-dark/70 max-w-3xl mx-auto">
-                    Quarkdown 在多个方面超越传统排版工具，提供更现代、更灵活的解决方案
-                </p>
+        <!-- Comparison Table -->
+        <div class="scroll-reveal overflow-x-auto mb-20">
+          <table class="comparison-table w-full min-w-[640px] text-sm">
+            <thead>
+              <tr class="text-left">
+                <th class="py-4 px-4 text-surface-300 font-medium">特性</th>
+                <th class="py-4 px-4 text-center">
+                  <span class="text-gradient font-bold">Quarkdown</span>
+                </th>
+                <th class="py-4 px-4 text-center text-surface-300">LaTeX</th>
+                <th class="py-4 px-4 text-center text-surface-300">Typst</th>
+                <th class="py-4 px-4 text-center text-surface-300">AsciiDoc</th>
+                <th class="py-4 px-4 text-center text-surface-300">MDX</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="py-3 px-4">简洁易读</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">完整文档控制</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">脚本支持</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-yellow-400">部分</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">书籍/文章导出</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-yellow-400">第三方</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">演示文稿导出</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-yellow-400">第三方</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">静态站点导出</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-yellow-400">实验性</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">文档/Wiki 导出</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-red-400">&#10007;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+                <td class="py-3 px-4 text-center text-brand-400">&#10003;</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">学习曲线</td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="inline-block w-3 h-3 rounded-full bg-green-400"
+                  ></span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="inline-block w-3 h-3 rounded-full bg-red-400"
+                  ></span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="inline-block w-3 h-3 rounded-full bg-orange-400"
+                  ></span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="inline-block w-3 h-3 rounded-full bg-green-400"
+                  ></span>
+                </td>
+                <td class="py-3 px-4 text-center">
+                  <span
+                    class="inline-block w-3 h-3 rounded-full bg-green-400"
+                  ></span>
+                </td>
+              </tr>
+              <tr>
+                <td class="py-3 px-4">输出目标</td>
+                <td
+                  class="py-3 px-4 text-center font-mono text-xs text-brand-400"
+                >
+                  HTML, PDF, TXT
+                </td>
+                <td
+                  class="py-3 px-4 text-center font-mono text-xs text-surface-300"
+                >
+                  PDF, PS
+                </td>
+                <td
+                  class="py-3 px-4 text-center font-mono text-xs text-surface-300"
+                >
+                  HTML, PDF
+                </td>
+                <td
+                  class="py-3 px-4 text-center font-mono text-xs text-surface-300"
+                >
+                  HTML, PDF, ePub
+                </td>
+                <td
+                  class="py-3 px-4 text-center font-mono text-xs text-surface-300"
+                >
+                  HTML
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Code Comparison -->
+        <div class="scroll-reveal grid md:grid-cols-2 gap-6">
+          <div class="code-block rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-display font-semibold text-sm">LaTeX</span>
+              <span class="text-xs text-surface-300 font-mono">传统方式</span>
             </div>
-            
-            <div class="overflow-x-auto">
-                <table class="comparison-table w-full glass-card rounded-2xl overflow-hidden">
-                    <thead>
-                        <tr>
-                            <th class="font-heading">特性</th>
-                            <th class="font-heading">Quarkdown</th>
-                            <th class="font-heading">LaTeX</th>
-                            <th class="font-heading">Typst</th>
-                            <th class="font-heading">AsciiDoc</th>
-                            <th class="font-heading">MDX</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="font-heading font-medium">简洁易读</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">完整文档控制</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">脚本支持</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-yellow-500">部分支持</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">书籍/文章导出</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-yellow-500">第三方</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">演示文稿导出</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-yellow-500">第三方</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">静态站点导出</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-yellow-500">实验性</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">文档/Wiki 导出</td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-red-500">✗</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                            <td><span class="text-accent-green">✓</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">学习曲线</td>
-                            <td><span class="text-accent-green">简单</span></td>
-                            <td><span class="text-red-500">困难</span></td>
-                            <td><span class="text-yellow-500">中等</span></td>
-                            <td><span class="text-accent-green">简单</span></td>
-                            <td><span class="text-accent-green">简单</span></td>
-                        </tr>
-                        <tr>
-                            <td class="font-heading font-medium">输出目标</td>
-                            <td>HTML, PDF, TXT</td>
-                            <td>PDF, PostScript</td>
-                            <td>HTML, PDF</td>
-                            <td>HTML, PDF, ePub</td>
-                            <td>HTML</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="mt-12 glass-card rounded-2xl p-8">
-                <h3 class="font-heading font-semibold text-2xl mb-6">代码对比示例</h3>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="font-heading font-medium text-lg mb-4 text-red-500">LaTeX 代码</h4>
-                        <div class="code-block">
-                            <pre><code>\tableofcontents
+            <pre
+              class="font-mono text-xs leading-relaxed text-surface-200 overflow-x-auto"
+            ><code>\tableofcontents
 
 \section{Section}
 
@@ -520,441 +1151,513 @@
         \includegraphics[width=0.3\linewidth]{img3.png}
     \end{subfigure}
 \end{figure}</code></pre>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="font-heading font-medium text-lg mb-4 text-accent-green">Quarkdown 代码</h4>
-                        <div class="code-block">
-                            <pre><code>.tableofcontents
+          </div>
+          <div
+            class="code-block rounded-2xl p-6"
+            style="border-color: rgba(26, 173, 125, 0.3)"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-display font-semibold text-sm text-brand-400"
+                >Quarkdown</span
+              >
+              <span class="tag px-2 py-0.5 rounded text-xs">推荐</span>
+            </div>
+            <pre
+              class="font-mono text-xs leading-relaxed text-surface-200 overflow-x-auto"
+            ><code><span class="text-brand-400">.tableofcontents</span>
 
 # Section
 
 ## Subsection
 
-1. **First** item
-2. **Second** item
+1. <span class="text-yellow-300">**First**</span> item
+2. <span class="text-yellow-300">**Second**</span> item
 
-.center
-    This text is _centered_.
+<span class="text-brand-400">.center</span>
+    This text is <span class="text-cyan-400">_centered_</span>.
 
-.row alignment:{spacebetween}
+<span class="text-brand-400">.row</span> alignment:<span class="text-cyan-400">{spacebetween}</span>
     ![Image 1](img1.png)
 
     ![Image 2](img2.png)
-    
+
     ![Image 3](img3.png)</code></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </section>
 
-    <!-- 分隔线 -->
-    <div class="section-divider mx-4 sm:mx-6 lg:mx-8"></div>
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="relative py-28 md:py-36">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-20">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >快速上手</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            几分钟即可<span class="text-gradient">开始</span>
+          </h2>
+          <p class="text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            新用户？你将在快速入门指南中找到所需的一切，让你的第一个文档焕发生机！
+          </p>
+        </div>
 
-    <!-- 快速上手 -->
-    <section id="quickstart" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-6">
-                    <span class="gradient-text">快速上手</span>
-                </h2>
-                <p class="font-body text-xl text-dark/70 max-w-3xl mx-auto">
-                    几分钟内开始使用 Quarkdown 创建你的第一个文档
-                </p>
+        <!-- Install -->
+        <div class="scroll-reveal mb-16">
+          <h3 class="font-display text-2xl font-semibold mb-8 text-center">
+            安装
+          </h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Linux/macOS script -->
+            <div class="install-card glass-light rounded-2xl p-6">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-lg">&#128039;</span>
+                <span class="font-display font-semibold text-sm"
+                  >安装脚本 (Linux/macOS)</span
+                >
+              </div>
+              <pre
+                class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4 overflow-x-auto"
+              ><code>curl -fsSL https://raw.githubusercontent.com/quarkdown-labs/get-quarkdown/refs/heads/main/install.sh | sudo env "PATH=$PATH" bash</code></pre>
             </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div>
-                    <h3 class="font-heading font-semibold text-2xl mb-6">安装方法</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="glass-card rounded-2xl p-6">
-                            <h4 class="font-heading font-medium text-lg mb-3">安装脚本 (Linux/macOS)</h4>
-                            <div class="code-block mb-4">
-                                <pre><code>curl -fsSL https://raw.githubusercontent.com/quarkdown-labs/get-quarkdown/refs/heads/main/install.sh | sudo env "PATH=$PATH" bash</code></pre>
-                            </div>
-                            <p class="font-body text-dark/70 text-sm">
-                                Root 权限允许脚本将 Quarkdown 安装到 <code>/opt/quarkdown</code>，并将其包装脚本安装到 <code>/usr/local/bin/quarkdown</code>。
-                            </p>
-                        </div>
-                        
-                        <div class="glass-card rounded-2xl p-6">
-                            <h4 class="font-heading font-medium text-lg mb-3">Homebrew (Linux/macOS)</h4>
-                            <div class="code-block">
-                                <pre><code>brew install quarkdown-labs/quarkdown/quarkdown</code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="glass-card rounded-2xl p-6">
-                            <h4 class="font-heading font-medium text-lg mb-3">安装脚本 (Windows)</h4>
-                            <div class="code-block">
-                                <pre><code>irm https://raw.githubusercontent.com/quarkdown-labs/get-quarkdown/refs/heads/main/install.ps1 | iex</code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="glass-card rounded-2xl p-6">
-                            <h4 class="font-heading font-medium text-lg mb-3">Scoop (Windows)</h4>
-                            <div class="code-block">
-                                <pre><code>scoop bucket add java
+
+            <!-- Homebrew -->
+            <div class="install-card glass-light rounded-2xl p-6">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-lg">&#127861;</span>
+                <span class="font-display font-semibold text-sm"
+                  >Homebrew (Linux/macOS)</span
+                >
+              </div>
+              <pre
+                class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4 overflow-x-auto"
+              ><code>brew install quarkdown-labs/quarkdown/quarkdown</code></pre>
+            </div>
+
+            <!-- Windows script -->
+            <div class="install-card glass-light rounded-2xl p-6">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-lg">&#128187;</span>
+                <span class="font-display font-semibold text-sm"
+                  >安装脚本 (Windows)</span
+                >
+              </div>
+              <pre
+                class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4 overflow-x-auto"
+              ><code>irm https://raw.githubusercontent.com/quarkdown-labs/get-quarkdown/refs/heads/main/install.ps1 | iex</code></pre>
+            </div>
+
+            <!-- Scoop -->
+            <div class="install-card glass-light rounded-2xl p-6">
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-lg">&#127918;</span>
+                <span class="font-display font-semibold text-sm"
+                  >Scoop (Windows)</span
+                >
+              </div>
+              <pre
+                class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4 overflow-x-auto"
+              ><code>scoop bucket add java
 scoop bucket add quarkdown https://github.com/quarkdown-labs/scoop-quarkdown
 scoop install quarkdown</code></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="font-heading font-semibold text-2xl mb-6">创建项目</h3>
-                    
-                    <div class="glass-card rounded-2xl p-8 mb-8">
-                        <div class="code-block mb-6">
-                            <pre><code>quarkdown create [directory]</code></pre>
-                        </div>
-                        <p class="font-body text-dark/70 mb-4">
-                            将启动基于提示的项目向导，让你比以往更快地搭建新的 Quarkdown 项目，所有元数据和初始内容均已就绪。
-                        </p>
-                        <a href="https://quarkdown.com/wiki/cli-project-creator" target="_blank" class="inline-flex items-center text-accent-orange font-heading text-sm hover:text-accent-orange/80">
-                            <span>了解项目创建器</span>
-                            <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
-                        </a>
-                    </div>
-                    
-                    <h3 class="font-heading font-semibold text-2xl mb-6">编译文档</h3>
-                    
-                    <div class="glass-card rounded-2xl p-8 mb-8">
-                        <div class="code-block mb-6">
-                            <pre><code>quarkdown c file.qd</code></pre>
-                        </div>
-                        <p class="font-body text-dark/70 mb-4">
-                            运行此命令将编译给定文件并将输出保存到文件。
-                        </p>
-                        
-                        <h4 class="font-heading font-medium text-lg mb-3">常用选项</h4>
-                        <ul class="space-y-3 font-body text-dark/70">
-                            <li class="flex items-start">
-                                <span class="text-accent-orange mr-2">•</span>
-                                <span><strong>-p</strong> 或 <strong>--preview</strong>：编译后启用自动内容重新加载</span>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-accent-orange mr-2">•</span>
-                                <span><strong>-w</strong> 或 <strong>--watch</strong>：每当源目录中的文件发生更改时重新编译</span>
-                            </li>
-                            <li class="flex items-start">
-                                <span class="text-accent-orange mr-2">•</span>
-                                <span><strong>--pdf</strong>：生成 PDF 文件</span>
-                            </li>
-                        </ul>
-                        
-                        <div class="mt-6 p-4 bg-accent-blue/10 rounded-xl">
-                            <p class="font-heading text-accent-blue text-sm">
-                                <strong>提示：</strong>结合 <code>-p -w</code> 即可实现<strong>实时预览</strong>！
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="glass-card rounded-2xl p-8">
-                        <h4 class="font-heading font-medium text-lg mb-4">交互式 REPL</h4>
-                        <div class="code-block mb-4">
-                            <pre><code>quarkdown repl</code></pre>
-                        </div>
-                        <p class="font-body text-dark/70">
-                            如果你想先熟悉 Quarkdown，可以使用交互式 REPL 模式体验。
-                        </p>
-                    </div>
-                </div>
             </div>
+          </div>
         </div>
+
+        <!-- Create & Compile -->
+        <div class="scroll-reveal grid md:grid-cols-2 gap-8 mb-16">
+          <div class="glass-light rounded-2xl p-8">
+            <div
+              class="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center mb-5 text-brand-400 font-display font-bold"
+            >
+              1
+            </div>
+            <h3 class="font-display text-xl font-semibold mb-3">创建项目</h3>
+            <p class="text-sm text-surface-300 leading-relaxed mb-4">
+              <code class="text-brand-400 font-mono"
+                >quarkdown create [directory]</code
+              >
+              将启动基于提示的项目向导，让你比以往更快地搭建新的 Quarkdown
+              项目。
+            </p>
+            <pre
+              class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4"
+            ><code>quarkdown create my-project</code></pre>
+          </div>
+          <div class="glass-light rounded-2xl p-8">
+            <div
+              class="w-10 h-10 rounded-xl bg-cyan-450/10 flex items-center justify-center mb-5 text-cyan-400 font-display font-bold"
+            >
+              2
+            </div>
+            <h3 class="font-display text-xl font-semibold mb-3">编译</h3>
+            <p class="text-sm text-surface-300 leading-relaxed mb-4">
+              运行
+              <code class="text-brand-400 font-mono">quarkdown c file.qd</code>
+              将编译给定文件并将输出保存到文件。
+            </p>
+            <pre
+              class="font-mono text-xs leading-relaxed text-brand-300 bg-surface-950/50 rounded-lg p-4"
+            ><code>quarkdown c file.qd</code></pre>
+          </div>
+        </div>
+
+        <!-- CLI Options -->
+        <div class="scroll-reveal glass-light rounded-2xl p-8">
+          <h3 class="font-display text-xl font-semibold mb-6">常用选项</h3>
+          <div class="grid sm:grid-cols-3 gap-6">
+            <div>
+              <code class="font-mono text-sm text-brand-400 font-semibold"
+                >-p / --preview</code
+              >
+              <p class="text-sm text-surface-300 mt-2 leading-relaxed">
+                编译后启用自动内容重新加载
+              </p>
+            </div>
+            <div>
+              <code class="font-mono text-sm text-brand-400 font-semibold"
+                >-w / --watch</code
+              >
+              <p class="text-sm text-surface-300 mt-2 leading-relaxed">
+                每当源目录中的文件发生更改时重新编译
+              </p>
+            </div>
+            <div>
+              <code class="font-mono text-sm text-brand-400 font-semibold"
+                >--pdf</code
+              >
+              <p class="text-sm text-surface-300 mt-2 leading-relaxed">
+                生成 PDF 文件
+              </p>
+            </div>
+          </div>
+          <div class="mt-6 pt-6 border-t border-surface-800">
+            <p class="text-sm text-surface-300">
+              提示：结合
+              <code class="text-brand-400 font-mono">-p -w</code>
+              即可实现<strong class="text-white">实时预览</strong>！
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
-    <!-- 分隔线 -->
-    <div class="section-divider mx-4 sm:mx-6 lg:mx-8"></div>
-
-    <!-- 示例文档 -->
-    <section id="examples" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl mb-6">
-                    <span class="gradient-text">示例文档</span>
-                </h2>
-                <p class="font-body text-xl text-dark/70 max-w-3xl mx-auto">
-                    探索 Quarkdown 的强大功能，查看实际示例和演示
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                    <div class="glass-card rounded-2xl p-8">
-                        <img src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/mock-demo.png" alt="示例文档演示" class="w-full h-auto rounded-xl mb-6">
-                        <h3 class="font-heading font-semibold text-2xl mb-4">Mock 示例文档</h3>
-                        <p class="font-body text-dark/70 mb-6">
-                            <strong>Mock</strong> 是用 Quarkdown 编写的，是该语言提供的视觉元素的全面集合，非常适合探索和理解其核心功能 — 同时还能以页面或幻灯片的形式动手实践和实验。
-                        </p>
-                        <div class="flex flex-wrap gap-4">
-                            <a href="https://github.com/iamgio/quarkdown/blob/main/mock" target="_blank" class="btn-primary text-white font-heading font-semibold px-6 py-3 rounded-full text-sm">
-                                查看源代码
-                            </a>
-                            <a href="https://github.com/quarkdown-labs/generated/blob/main/mock/paperwhite_latex.pdf" target="_blank" class="font-heading font-semibold text-dark border-2 border-dark hover:border-accent-orange hover:text-accent-orange px-6 py-3 rounded-full text-sm transition-colors duration-300">
-                                查看 PDF 示例
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <div class="glass-card rounded-2xl p-8 mb-8">
-                        <img src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/paged-demo.png" alt="论文演示" class="w-full h-auto rounded-xl mb-6">
-                        <h3 class="font-heading font-semibold text-2xl mb-4">学术论文演示</h3>
-                        <p class="font-body text-dark/70 mb-4">
-                            原始出处：<a href="https://arxiv.org/abs/1706.03762v7" target="_blank" class="text-accent-blue hover:text-accent-blue/80">Attention Is All You Need</a>
-                        </p>
-                        <p class="font-body text-dark/70">
-                            Quarkdown 可以轻松处理复杂的学术论文，包括数学公式、图表、参考文献等。
-                        </p>
-                    </div>
-                    
-                    <div class="glass-card rounded-2xl p-8">
-                        <img src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/code-chart.png" alt="图表代码演示" class="w-full h-auto rounded-xl mb-6">
-                        <h3 class="font-heading font-semibold text-2xl mb-4">图表和可视化</h3>
-                        <p class="font-body text-dark/70">
-                            Quarkdown 支持创建各种图表和可视化元素，让你的文档更加生动和专业。
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-16 glass-card rounded-2xl p-8">
-                <h3 class="font-heading font-semibold text-2xl mb-6">实时预览功能</h3>
-                <div class="flex flex-col lg:flex-row items-center gap-8">
-                    <div class="flex-1">
-                        <img src="https://raw.githubusercontent.com/quarkdown-labs/quarkdown-vscode/refs/heads/project-files/live-preview.gif" alt="实时预览" class="w-full h-auto rounded-xl">
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-body text-dark/70 mb-6">
-                            结合实时预览、快速的编译速度和强大的 VS Code 扩展，无论是学术论文、书籍、知识库还是交互式演示文稿，Quarkdown 都能轻松胜任。
-                        </p>
-                        <a href="https://marketplace.visualstudio.com/items?itemName=quarkdown.quarkdown-vscode" target="_blank" class="btn-primary text-white font-heading font-semibold px-6 py-3 rounded-full text-sm inline-flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.15 2.587L18.21.21a1.166 1.166 0 00-1.32.183l-8.7 7.9-3.78-2.87a.78.78 0 00-.996.04l-1.06.95a.78.78 0 00-.01 1.12l3.28 2.96-3.28 2.96a.78.78 0 00.01 1.12l1.06.95c.28.25.68.23.996.04l3.78-2.87 8.7 7.9a1.164 1.164 0 001.32.183l4.94-2.377A1.176 1.176 0 0024 17.22V5.78a1.176 1.176 0 00-.85-1.193zm-5.04 12.27L12.14 10.5l5.97-5.43v10.78z"/>
-                            </svg>
-                            安装 VS Code 扩展
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <!-- Example Section -->
+    <section id="example" class="relative py-28 md:py-36 gradient-mesh">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="scroll-reveal text-center mb-16">
+          <span
+            class="tag px-3 py-1 rounded-full text-xs font-medium mb-4 inline-block"
+            >示例文档</span
+          >
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            Mock 示例文档
+          </h2>
+          <p class="text-surface-300 max-w-2xl mx-auto leading-relaxed">
+            Mock 是用 Quarkdown
+            编写的，是该语言提供的视觉元素的全面集合，非常适合探索和理解其核心功能。
+          </p>
         </div>
+
+        <div
+          class="scroll-reveal relative rounded-2xl overflow-hidden border border-surface-800 shadow-2xl shadow-brand-900/10"
+        >
+          <img
+            src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/mock-demo.png"
+            alt="示例文档演示"
+            class="w-full"
+          />
+        </div>
+
+        <div class="scroll-reveal mt-8 text-center">
+          <p class="text-sm text-surface-300">
+            源文件可在
+            <a
+              href="https://github.com/iamgio/quarkdown/blob/main/mock"
+              target="_blank"
+              class="text-brand-400 hover:underline"
+              >mock 目录</a
+            >
+            中找到，可通过
+            <code class="text-brand-400 font-mono"
+              >quarkdown c mock/main.qd -p</code
+            >
+            编译。
+          </p>
+        </div>
+      </div>
     </section>
 
-    <!-- 分隔线 -->
-    <div class="section-divider mx-4 sm:mx-6 lg:mx-8"></div>
-
-    <!-- 其他信息 -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- 贡献 -->
-                <div class="glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-blue/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-2xl mb-4">贡献</h3>
-                    <p class="font-body text-dark/70 mb-6">
-                        欢迎贡献！请查看 CONTRIBUTING.md 了解如何通过 issue 或 pull request 进行贡献。
-                    </p>
-                    <a href="https://github.com/iamgio/quarkdown/blob/main/CONTRIBUTING.md" target="_blank" class="inline-flex items-center text-accent-blue font-heading text-sm hover:text-accent-blue/80">
-                        <span>查看贡献指南</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-                
-                <!-- 赞助者 -->
-                <div class="glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-orange/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-2xl mb-4">赞助者</h3>
-                    <p class="font-body text-dark/70 mb-6">
-                        特别感谢所有支持此项目的赞助者！
-                    </p>
-                    <div class="flex flex-wrap gap-4 mb-6">
-                        <a href="https://falconer.com" target="_blank" class="inline-flex items-center">
-                            <img src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/sponsors/falconer.jpeg" alt="Falconer" class="h-8 rounded">
-                        </a>
-                        <a href="https://github.com/RayOffiah" target="_blank" class="inline-flex items-center">
-                            <img src="https://avatars.githubusercontent.com/u/77050471?v=4" alt="RayOffiah" class="h-8 w-8 rounded-full">
-                        </a>
-                        <a href="https://github.com/vitto4" target="_blank" class="inline-flex items-center">
-                            <img src="https://avatars.githubusercontent.com/u/128498605?v=4" alt="vitto4" class="h-8 w-8 rounded-full">
-                        </a>
-                    </div>
-                    <a href="https://github.com/sponsors/iamgio" target="_blank" class="inline-flex items-center text-accent-orange font-heading text-sm hover:text-accent-orange/80">
-                        <span>成为赞助者</span>
-                        <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
-                </div>
-                
-                <!-- 理念 -->
-                <div class="glass-card rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent-green/10 rounded-2xl flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="font-heading font-semibold text-2xl mb-4">理念</h3>
-                    <div class="flex justify-center mb-6">
-                        <picture>
-                            <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-light.svg">
-                            <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-dark.svg">
-                            <img alt="Quarkdown 图标" src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-dark.svg" class="w-24 h-24">
-                        </picture>
-                    </div>
-                    <p class="font-body text-dark/70 mb-4">
-                        那个可能被误认为星球的东西，实际上是一个<strong>夸克</strong>，或者更准确地说，是一个<strong>下夸克</strong>，一种构成物质主要成分的基本粒子。
-                    </p>
-                    <p class="font-body text-dark/70">
-                        这正是 <strong>Quarkdown</strong> 所基于的理念。
-                    </p>
-                </div>
-            </div>
-            
-            <div class="mt-16 glass-card rounded-2xl p-8">
-                <h3 class="font-heading font-semibold text-2xl mb-6">许可证</h3>
-                <p class="font-body text-dark/70 mb-4">
-                    默认情况下，Quarkdown 及其模块采用 <a href="https://github.com/iamgio/quarkdown/blob/main/LICENSE" target="_blank" class="text-accent-blue hover:text-accent-blue/80">GNU GPLv3</a> 许可证，但包含自己 LICENSE 文件的模块除外。
-                </p>
-                <p class="font-body text-dark/70">
-                    CLI（<code>quarkdown-cli</code>）和语言服务器（<code>quarkdown-lsp</code>）模块及二进制文件采用 <a href="https://github.com/iamgio/quarkdown/blob/main/LICENSE" target="_blank" class="text-accent-blue hover:text-accent-blue/80">GNU AGPLv3</a> 许可证。
-                </p>
-            </div>
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="relative py-28 md:py-36">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <div class="scroll-reveal">
+          <img
+            src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-light.svg"
+            alt="Quarkdown 图标"
+            class="w-24 h-24 mx-auto mb-10 animate-float"
+          />
         </div>
+        <div class="scroll-reveal">
+          <h2
+            class="font-display text-3xl md:text-4xl font-bold tracking-tighter mb-8"
+          >
+            理念
+          </h2>
+          <p class="text-surface-300 leading-relaxed max-w-2xl mx-auto">
+            那个可能被误认为星球的东西，实际上是一个<strong class="text-white"
+              >夸克</strong
+            >，或者更准确地说，是一个<strong class="text-white">下夸克</strong
+            >，一种构成物质主要成分的基本粒子：它们赋予了我们已知所有复杂结构以生命，同时也是现存最轻的物体之一。
+          </p>
+          <p class="text-surface-300 leading-relaxed max-w-2xl mx-auto mt-4">
+            这正是
+            <strong class="text-gradient">Quarkdown</strong> 所基于的理念。
+          </p>
+        </div>
+      </div>
     </section>
 
-    <!-- 页脚 -->
-    <footer class="bg-dark text-light py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-                <div>
-                    <div class="flex items-center mb-6">
-                        <img class="h-8 w-8 mr-3" src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-light.svg" alt="Quarkdown Logo">
-                        <h3 class="font-heading font-bold text-xl">Quarkdown</h3>
-                    </div>
-                    <p class="font-body text-light/70 mb-6">
-                        基于 Markdown 的现代排版系统，专为多用途而设计。
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="https://github.com/iamgio/quarkdown" target="_blank" class="text-light/70 hover:text-accent-orange transition-colors duration-300">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </a>
-                        <a href="https://marketplace.visualstudio.com/items?itemName=quarkdown.quarkdown-vscode" target="_blank" class="text-light/70 hover:text-accent-blue transition-colors duration-300">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.15 2.587L18.21.21a1.166 1.166 0 00-1.32.183l-8.7 7.9-3.78-2.87a.78.78 0 00-.996.04l-1.06.95a.78.78 0 00-.01 1.12l3.28 2.96-3.28 2.96a.78.78 0 00.01 1.12l1.06.95c.28.25.68.23.996.04l3.78-2.87 8.7 7.9a1.164 1.164 0 001.32.183l4.94-2.377A1.176 1.176 0 0024 17.22V5.78a1.176 1.176 0 00-.85-1.193zm-5.04 12.27L12.14 10.5l5.97-5.43v10.78z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h4 class="font-heading font-semibold text-lg mb-6">文档</h4>
-                    <ul class="space-y-3">
-                        <li><a href="https://quarkdown.com/wiki" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">Wiki</a></li>
-                        <li><a href="https://quarkdown.com/docs" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">API 文档</a></li>
-                        <li><a href="https://quarkdown.com/wiki/quickstart" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">快速入门</a></li>
-                        <li><a href="https://quarkdown.com/wiki/cli-options" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">CLI 选项</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-heading font-semibold text-lg mb-6">资源</h4>
-                    <ul class="space-y-3">
-                        <li><a href="https://github.com/iamgio/quarkdown/releases/latest" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">最新版本</a></li>
-                        <li><a href="https://github.com/iamgio/quarkdown/blob/main/mock" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">示例文档</a></li>
-                        <li><a href="https://github.com/quarkdown-labs/generated" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">生成的 PDF</a></li>
-                        <li><a href="https://github.com/iamgio/quarkdown/blob/main/CONTRIBUTING.md" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">贡献指南</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-heading font-semibold text-lg mb-6">安装</h4>
-                    <ul class="space-y-3">
-                        <li><a href="https://github.com/quarkdown-labs/get-quarkdown" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">安装脚本</a></li>
-                        <li><a href="https://github.com/quarkdown-labs/scoop-quarkdown" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">Scoop (Windows)</a></li>
-                        <li><a href="https://github.com/quarkdown-labs/setup-quarkdown" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">GitHub Actions</a></li>
-                        <li><a href="https://marketplace.visualstudio.com/items?itemName=quarkdown.quarkdown-vscode" target="_blank" class="font-body text-light/70 hover:text-accent-orange transition-colors duration-300">VS Code 扩展</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="mt-12 pt-8 border-t border-light/20">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="font-body text-light/70 text-sm mb-4 md:mb-0">
-                        © 2024 Quarkdown. 采用 GNU GPLv3 许可证。
-                    </p>
-                    <div class="flex space-x-6">
-                        <a href="https://github.com/iamgio/quarkdown" target="_blank" class="font-body text-light/70 hover:text-accent-orange text-sm transition-colors duration-300">GitHub</a>
-                        <a href="https://quarkdown.com/wiki" target="_blank" class="font-body text-light/70 hover:text-accent-orange text-sm transition-colors duration-300">文档</a>
-                        <a href="https://github.com/iamgio/quarkdown/releases/latest" target="_blank" class="font-body text-light/70 hover:text-accent-orange text-sm transition-colors duration-300">下载</a>
-                    </div>
-                </div>
-            </div>
+    <!-- CTA Section -->
+    <section class="relative py-20 gradient-mesh">
+      <div class="max-w-4xl mx-auto px-6 text-center">
+        <div class="scroll-reveal">
+          <h2
+            class="font-display text-3xl md:text-5xl font-bold tracking-tighter mb-6"
+          >
+            准备好了吗？
+          </h2>
+          <p class="text-surface-300 max-w-xl mx-auto mb-10 leading-relaxed">
+            查看 Wiki 开始使用并了解更多关于该语言及其功能的信息！
+          </p>
+          <div
+            class="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <a
+              href="https://quarkdown.com/wiki"
+              target="_blank"
+              class="btn-primary px-8 py-3.5 rounded-xl text-base font-semibold text-white"
+            >
+              阅读 Wiki
+            </a>
+            <a
+              href="https://quarkdown.com/docs"
+              target="_blank"
+              class="btn-outline px-8 py-3.5 rounded-xl text-base font-medium text-brand-400"
+            >
+              查看文档
+            </a>
+            <a
+              href="https://github.com/iamgio/quarkdown"
+              target="_blank"
+              class="btn-outline px-8 py-3.5 rounded-xl text-base font-medium text-surface-300"
+              style="border-color: rgba(255, 255, 255, 0.1)"
+            >
+              GitHub
+            </a>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-surface-800 py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-8 mb-10">
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <img
+                src="https://raw.githubusercontent.com/iamgio/quarkdown/project-files/images/ticon-light.svg"
+                alt="Quarkdown"
+                class="w-6 h-6"
+              />
+              <span class="font-display font-bold text-sm">Quarkdown</span>
+            </div>
+            <p class="text-xs text-surface-300 leading-relaxed">
+              拥有超能力的 Markdown：从灵感到精美文档。
+            </p>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm mb-3">资源</h4>
+            <ul class="space-y-2 text-xs text-surface-300">
+              <li>
+                <a
+                  href="https://quarkdown.com/wiki"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >Wiki</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://quarkdown.com/docs"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >文档</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://quarkdown.com/wiki/quickstart"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >快速入门</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://quarkdown.com/wiki/cli-options"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >CLI 选项</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm mb-3">社区</h4>
+            <ul class="space-y-2 text-xs text-surface-300">
+              <li>
+                <a
+                  href="https://github.com/iamgio/quarkdown"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/iamgio/quarkdown/blob/main/CONTRIBUTING.md"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >贡献指南</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/sponsors/iamgio"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >赞助</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-display font-semibold text-sm mb-3">工具</h4>
+            <ul class="space-y-2 text-xs text-surface-300">
+              <li>
+                <a
+                  href="https://marketplace.visualstudio.com/items?itemName=quarkdown.quarkdown-vscode"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >VS Code 扩展</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/quarkdown-labs/setup-quarkdown"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >GitHub Actions</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/iamgio/quarkdown/releases/latest"
+                  target="_blank"
+                  class="hover:text-brand-400 transition-colors"
+                  >下载</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="border-t border-surface-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4"
+        >
+          <p class="text-xs text-surface-300">
+            Quarkdown 采用
+            <a
+              href="https://github.com/iamgio/quarkdown/blob/main/LICENSE"
+              target="_blank"
+              class="text-brand-400 hover:underline"
+              >GNU GPLv3</a
+            >
+            许可证
+          </p>
+          <p class="text-xs text-surface-300">
+            README 汉化自
+            <a
+              href="https://github.com/iamgio/quarkdown"
+              target="_blank"
+              class="text-brand-400 hover:underline"
+              >github.com/iamgio/quarkdown</a
+            >
+          </p>
+        </div>
+      </div>
     </footer>
 
     <script>
-        // 移动端菜单切换
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Close mobile menu on link click
+      mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.add("hidden");
         });
-        
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // 关闭移动菜单
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        });
-        
-        // 导航栏滚动效果
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                nav.classList.add('shadow-lg');
-            } else {
-                nav.classList.remove('shadow-lg');
+      });
+
+      // Scroll reveal
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
             }
-        });
-        
-        // 检查用户是否偏好减少动画
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        
-        if (prefersReducedMotion.matches) {
-            // 禁用所有动画
-            document.documentElement.style.setProperty('--animation-duration', '0s');
-            document.documentElement.style.setProperty('--transition-duration', '0s');
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px",
+        },
+      );
+
+      document.querySelectorAll(".scroll-reveal").forEach((el) => {
+        observer.observe(el);
+      });
+
+      // Navbar background on scroll
+      const navbar = document.getElementById("navbar");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+          navbar.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+        } else {
+          navbar.style.borderBottom = "none";
         }
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
     </script>
-</body>
+  </body>
 </html>
